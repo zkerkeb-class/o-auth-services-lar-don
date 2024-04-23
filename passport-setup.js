@@ -1,6 +1,6 @@
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import dotenv from "dotenv";
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -13,9 +13,9 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, done) {
       done(null, {
-        id: profile.id,
+        googleId: profile.id,
         email: profile.emails[0].value,
-        displayName: profile.displayName,
+        name: profile.displayName,
       });
     }
   )
