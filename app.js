@@ -3,7 +3,9 @@ import session from 'express-session';
 import passport from 'passport';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import './passport-setup.js'; // Assurez-vous que cela configure correctement Passport
+import './passport-setup.js';
+import {webMetrics} from "./webMetrics.js";
+// Assurez-vous que cela configure correctement Passport
 
 dotenv.config();
 const app = express();
@@ -47,6 +49,7 @@ app.get(
 app.get('/login', (req, res) => res.send('Login Failed'));
 
 // Définissez d'autres routes au besoin
+app.get('/metrics',webMetrics);
 
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
