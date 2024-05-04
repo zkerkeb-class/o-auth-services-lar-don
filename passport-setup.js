@@ -1,6 +1,6 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import dotenv from 'dotenv';
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -9,13 +9,11 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `http://localhost:3005/auth/google/callback`,
+      callbackURL: `${process.env.OAUTH_SERVICE_URL}/auth/google/callback`,
     },
     function (accessToken, refreshToken, profile, done) {
       done(null, {
-        googleId: profile.id,
-        email: profile.emails[0].value,
-        name: profile.displayName,
+        accessToken,
       });
     }
   )
@@ -28,3 +26,5 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
   done(null, user);
 });
+
+module.exports = passport;

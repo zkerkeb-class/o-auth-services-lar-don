@@ -1,9 +1,14 @@
-import client from'prom-client';
+const client = require('prom-client');
+
 const register = client.register;
 
 client.collectDefaultMetrics();
 
-export async function webMetrics(req, res) {
+async function webMetrics(req, res) {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 }
+
+module.exports = {
+  webMetrics,
+};

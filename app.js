@@ -1,55 +1,16 @@
-import express from 'express';
-import session from 'express-session';
-import passport from 'passport';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import './passport-setup.js';
-import {webMetrics} from "./webMetrics.js";
-// Assurez-vous que cela configure correctement Passport
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const { webMetrics } = require('./webMetrics.js');
+const oauthRouter = require('./src/routes/index.js');
 
-dotenv.config();
+
 const app = express();
 
 app.use(cors());
 
-// Configuration de session
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET, // Utilisez une variable d'environnement pour votre secret de session
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: 'false', // Pour les environnements mixtes (développement et production)
-      httpOnly: true, // Pour empêcher l'accès aux cookies via JavaScript côté client
-    },
-  })
-);
+app.use('/auth', oauthRouter);
+app.get('/metrics', webMetrics);
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Routes pour l'authentification Google
-app.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-app.get(
-  '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    // La connexion a réussi, rediriger vers la page d'accueil du client
-    res.redirect(
-      `${process.env.FRONTEND_URL}/google-auth-success?email=${req.user.email}&name=${req.user.name}&googleId=${req.user.googleId}`
-    );
-  }
-);
-
-// Route de login échoué
-app.get('/login', (req, res) => res.send('Login Failed'));
-
-// Définissez d'autres routes au besoin
-app.get('/metrics',webMetrics);
-
-const PORT = process.env.PORT || 3005;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 4001;
+app.listen(PORT, () => console.info(`Server running on port ${PORT}`));
