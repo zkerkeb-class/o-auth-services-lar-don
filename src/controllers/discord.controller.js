@@ -1,4 +1,3 @@
-const url = require('url');
 const { request } = require('undici');
 require('dotenv').config();
 
@@ -8,6 +7,10 @@ exports.authenticate = (req, res) => {
 };
 
 exports.callback = async ({ query }, res) => {
+  if (!query.code || query.error) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login`);
+  }
+
   const { code } = query;
   const tokenResponseData = await request(
     'https://discord.com/api/oauth2/token',

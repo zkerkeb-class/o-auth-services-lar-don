@@ -1,5 +1,4 @@
 const { google } = require('googleapis');
-const url = require('url');
 require('dotenv').config();
 
 const oauth2Client = new google.auth.OAuth2(
@@ -17,9 +16,12 @@ exports.authenticate = (req, res) => {
   res.end();
 };
 
-exports.callback = async (req, res) => {
-  let q = url.parse(req.url, true).query;
-  const { tokens } = await oauth2Client.getToken(q.code);
+exports.callback = async ({ query }, res) => {
+  if (!query.code || query.error) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login`);
+  }
+
+  const { tokens } = await oauth2Client.getToken(query.code);
   oauth2Client.setCredentials(tokens);
   const oauth2 = google.oauth2({
     auth: oauth2Client,
