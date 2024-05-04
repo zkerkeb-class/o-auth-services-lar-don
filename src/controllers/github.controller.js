@@ -1,19 +1,8 @@
-const { google } = require('googleapis');
 const url = require('url');
 require('dotenv').config();
 
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URL
-);
-
 exports.authenticate = (req, res) => {
-  const authorizationUrl = oauth2Client.generateAuthUrl({
-    scope: ['profile', 'email'],
-  });
-
-  res.writeHead(301, { Location: authorizationUrl });
+  res.writeHead(301, { Location: process.env.DISCORD_OAUTH_URL });
   res.end();
 };
 
@@ -32,6 +21,6 @@ exports.callback = async (req, res) => {
   const id = data.id;
 
   res.redirect(
-    `${process.env.FRONTEND_URL}/google-auth-success?email=${email}&username=${username}&id=${id}`
+    `${process.env.FRONTEND_URL}/discord-auth-success?email=${email}&username=${username}&id=${id}`
   );
 };
