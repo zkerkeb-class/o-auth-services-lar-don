@@ -11,5 +11,5 @@ app.use(cors());
 app.use('/auth', oauthRouter);
 app.get('/metrics', webMetrics);
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.info(`[O AUTH] Server running on port ${PORT}`));

@@ -20,17 +20,14 @@ exports.callback = async ({ query }, res) => {
     accept: 'json',
   }).toString();
 
-  const tokenResponseData = await request(
-    'https://github.com/login/oauth/access_token',
-    {
-      method: 'POST',
-      body: body,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-      },
-    }
-  );
+  const tokenResponseData = await request(process.env.GITHUB_TOKEN_URL, {
+    method: 'POST',
+    body: body,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+    },
+  });
   const oauthData = await tokenResponseData.body.json();
   const params = {
     method: 'GET',
@@ -39,12 +36,9 @@ exports.callback = async ({ query }, res) => {
       Authorization: `token ${oauthData.access_token}`,
     },
   };
-  const userResult = await request(
-    `https://api.github.com/user?access_token=${oauthData.access_token}`,
-    params
-  );
+  const userResult = await request(`${process.env.GITHUB_USER_URL}`, params);
   const emailsResult = await request(
-    `https://api.github.com/user/emails?access_token=${oauthData.access_token}`,
+    `${process.env.GITHUB_USER_URL}/emails`,
     params
   );
   const { id, login } = await userResult.body.json();

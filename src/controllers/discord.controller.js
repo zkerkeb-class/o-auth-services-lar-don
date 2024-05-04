@@ -13,7 +13,7 @@ exports.callback = async ({ query }, res) => {
 
   const { code } = query;
   const tokenResponseData = await request(
-    'https://discord.com/api/oauth2/token',
+    process.env.DISCORD_TOKEN_URL,
     {
       method: 'POST',
       body: new URLSearchParams({
@@ -30,7 +30,7 @@ exports.callback = async ({ query }, res) => {
     }
   );
   const oauthData = await tokenResponseData.body.json();
-  const userResult = await request('https://discord.com/api/users/@me', {
+  const userResult = await request(process.env.DISCORD_USER_URL, {
     headers: {
       authorization: `${oauthData.token_type} ${oauthData.access_token}`,
     },
